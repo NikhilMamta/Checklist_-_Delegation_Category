@@ -19,7 +19,7 @@ export const Header = ({ onOpenMobileMenu }) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const isAdmin = currentUser?.role === 'Admin';
+  const isAdmin = currentUser?.role?.toLowerCase() === 'admin';
 
   // Close dropdown on click outside or escape key
   useEffect(() => {

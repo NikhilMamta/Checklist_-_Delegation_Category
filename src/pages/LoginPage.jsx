@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  Shield,
   User,
   Lock,
   Eye,
@@ -13,7 +12,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { ensureInitialData, loadSampleDummyData } from '../services/storage';
+import { ensureInitialData } from '../services/storage';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -46,18 +45,6 @@ export const LoginPage = () => {
         setError(result.error);
       }
     }, 250);
-  };
-
-  const handleQuickFill = (roleKey) => {
-    ensureInitialData();
-    setError('');
-    if (roleKey === 'admin') {
-      setIdentifier('admin');
-      setPassword('admin123');
-    } else {
-      setIdentifier('user');
-      setPassword('user123');
-    }
   };
 
   const handleRestoreAccounts = () => {
@@ -138,7 +125,7 @@ export const LoginPage = () => {
                   required
                   autoFocus
                   autoComplete="username"
-                  placeholder="Enter User ID (e.g. admin or user)"
+                  placeholder="Enter User ID"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-colors font-medium bg-slate-50/50 focus:bg-white"
@@ -194,48 +181,6 @@ export const LoginPage = () => {
               </button>
             </div>
           </form>
-
-          {/* Quick Demo Credentials Footer */}
-          <div className="mt-6 pt-5 border-t border-slate-100">
-            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center mb-2.5">
-              1-Click Demo Credentials
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickFill('admin')}
-                className="p-2.5 rounded-xl border border-blue-200/80 bg-blue-50/60 hover:bg-blue-100/70 text-left text-xs transition-all cursor-pointer group"
-              >
-                <div className="flex items-center gap-1.5 font-bold text-blue-700 group-hover:text-blue-800">
-                  <Shield className="w-3.5 h-3.5" />
-                  <span>Admin Demo</span>
-                </div>
-                <div className="text-[10px] text-slate-500 mt-0.5">
-                  ID: <span className="font-mono font-semibold text-slate-700">admin</span>
-                </div>
-                <div className="text-[10px] text-slate-500">
-                  Pass: <span className="font-mono font-semibold text-slate-700">admin123</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickFill('user')}
-                className="p-2.5 rounded-xl border border-emerald-200/80 bg-emerald-50/60 hover:bg-emerald-100/70 text-left text-xs transition-all cursor-pointer group"
-              >
-                <div className="flex items-center gap-1.5 font-bold text-emerald-700 group-hover:text-emerald-800">
-                  <User className="w-3.5 h-3.5" />
-                  <span>User Demo</span>
-                </div>
-                <div className="text-[10px] text-slate-500 mt-0.5">
-                  ID: <span className="font-mono font-semibold text-slate-700">user</span>
-                </div>
-                <div className="text-[10px] text-slate-500">
-                  Pass: <span className="font-mono font-semibold text-slate-700">user123</span>
-                </div>
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Footer Security Badge */}

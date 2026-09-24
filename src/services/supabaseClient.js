@@ -50,12 +50,12 @@ export const checkSupabaseConnection = async () => {
 export const syncSupabaseToAppStorage = async () => {
   if (!isSupabaseConfigured() || !supabase) return false;
   try {
-    // Exclusively query the isolated project table 'app_users' (DO NOT touch legacy 'users' table)
+    // Exclusively query isolated project tables 'user_credentials' or 'app_users' (DO NOT touch legacy 'users' table)
     let supaUsers = null;
-    let { data: appUsersData, error: appUsersErr } = await supabase.from('app_users').select('*');
+    let { data: credsData, error: credsErr } = await supabase.from('user_credentials').select('*');
     
-    if (!appUsersErr && Array.isArray(appUsersData) && appUsersData.length > 0) {
-      supaUsers = appUsersData.map(u => ({
+    if (!credsErr && Array.isArray(credsData) && credsData.length > 0) {
+      supaUsers = credsData.map(u => ({
         id: String(u.id),
         name: u.name || u.username,
         username: u.username,
@@ -71,16 +71,36 @@ export const syncSupabaseToAppStorage = async () => {
         employeeId: u.employee_id || '',
         createdAt: u.created_at || new Date().toISOString(),
       }));
+    } else {
+      let { data: appUsersData, error: appUsersErr } = await supabase.from('app_users').select('*');
+      if (!appUsersErr && Array.isArray(appUsersData) && appUsersData.length > 0) {
+        supaUsers = appUsersData.map(u => ({
+          id: String(u.id),
+          name: u.name || u.username,
+          username: u.username,
+          password: u.password || '121212',
+          email: u.email || '',
+          mobile: u.mobile || '',
+          phone: u.mobile || '',
+          role: u.role || 'User',
+          groupId: u.department || 'General',
+          subgroupId: u.designation || '',
+          status: u.status || 'Active',
+          canSelfAssign: Boolean(u.can_self_assign),
+          employeeId: u.employee_id || '',
+          createdAt: u.created_at || new Date().toISOString(),
+        }));
+      }
     }
 
-    // If app_users table does not exist or is empty, use default project seed users (never load legacy system users)
+    // If isolated tables do not exist or are empty, use default 2 project accounts: admin/admin123 & user/user123
     if (!supaUsers || supaUsers.length === 0) {
       supaUsers = [
         {
           id: '1',
           name: 'System Administrator',
           username: 'admin',
-          password: '121212',
+          password: 'admin123',
           email: 'admin@mamtahospital.com',
           mobile: '9876543210',
           phone: '9876543210',
@@ -94,50 +114,18 @@ export const syncSupabaseToAppStorage = async () => {
         },
         {
           id: '2',
-          name: 'Dr. Rajesh Sharma',
-          username: 'dr_sharma',
-          password: '121212',
-          email: 'sharma@mamtahospital.com',
+          name: 'Hospital Staff User',
+          username: 'user',
+          password: 'user123',
+          email: 'user@mamtahospital.com',
           mobile: '9876543211',
           phone: '9876543211',
           role: 'User',
-          groupId: 'Cardiology',
-          subgroupId: 'Senior Consultant',
+          groupId: 'General Operations',
+          subgroupId: 'Hospital Staff',
           status: 'Active',
           canSelfAssign: true,
           employeeId: 'EMP-002',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: '3',
-          name: 'Priya Patel',
-          username: 'nurse_priya',
-          password: '121212',
-          email: 'priya@mamtahospital.com',
-          mobile: '9876543212',
-          phone: '9876543212',
-          role: 'User',
-          groupId: 'ICU',
-          subgroupId: 'Head Nurse',
-          status: 'Active',
-          canSelfAssign: false,
-          employeeId: 'EMP-003',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: '4',
-          name: 'Sahil Mirza',
-          username: 'sahil_it',
-          password: '121212',
-          email: 'sahil@mamtahospital.com',
-          mobile: '9876543213',
-          phone: '9876543213',
-          role: 'User',
-          groupId: 'IT & Infrastructure',
-          subgroupId: 'IT Executive',
-          status: 'Active',
-          canSelfAssign: true,
-          employeeId: 'EMP-004',
           createdAt: new Date().toISOString(),
         },
       ];

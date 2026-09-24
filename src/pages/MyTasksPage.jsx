@@ -47,7 +47,6 @@ import {
   extendDueDate,
   markTaskDone,
 } from '../services/taskService';
-import { loadSampleDummyData } from '../services/storage';
 import { getTaskHistory } from '../services/historyService';
 import { Modal } from '../components/common/Modal';
 import { EmptyState } from '../components/common/EmptyState';
@@ -689,20 +688,6 @@ export const MyTasksPage = () => {
             </div>
           ) : null}
 
-          <button
-            type="button"
-            onClick={() => {
-              loadSampleDummyData(true);
-              setSelectedCategory(null);
-              setSelectedSubcategory(null);
-              showToast('20 Sample Tasks loaded across 7 categories & 14 subcategories!', 'success');
-            }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 shadow-2xs transition-colors shrink-0 cursor-pointer"
-            title="Load 20 realistic hospital tasks organized by category and subcategory"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-700" />
-            <span>Load 20 Sample Tasks</span>
-          </button>
 
           {isAdmin && (
             <Link
@@ -896,16 +881,11 @@ export const MyTasksPage = () => {
                   title="All Tasks Completed!"
                   description={
                     isAdmin
-                      ? 'There are currently no active tasks across the hospital. Click below to load sample tasks or assign a new task.'
-                      : `There are currently no active tasks assigned to ${currentUser?.name}. Click below to load sample tasks or assign a new task.`
+                      ? 'There are currently no active tasks across the hospital. Assign a new task to get started.'
+                      : `There are currently no active tasks assigned to ${currentUser?.name}.`
                   }
-                  actionText="Load Sample Tasks"
-                  onAction={() => {
-                    loadSampleDummyData(true);
-                    showToast('20 Sample Tasks loaded successfully!', 'success');
-                  }}
-                  secondaryActionText="View Task History"
-                  onSecondaryAction={() => setMainTab('history')}
+                  actionText="View Task History"
+                  onAction={() => setMainTab('history')}
                 />
               ) : (
                 <>

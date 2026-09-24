@@ -32,14 +32,15 @@ CREATE INDEX IF NOT EXISTS idx_appusers_username ON public.app_users(username);
 CREATE INDEX IF NOT EXISTS idx_appusers_role ON public.app_users(role);
 CREATE INDEX IF NOT EXISTS idx_appusers_department ON public.app_users(department);
 
--- Seed initial default project users (Admin & Demo Users)
+-- Seed ONLY 2 User Accounts: admin (admin123) & user (user123)
 INSERT INTO public.app_users (id, username, password, name, email, mobile, role, department, designation, can_self_assign)
 VALUES 
-    ('1', 'admin', '121212', 'System Administrator', 'admin@mamtahospital.com', '9876543210', 'Admin', 'Management', 'Hospital Admin', true),
-    ('2', 'dr_sharma', '121212', 'Dr. Rajesh Sharma', 'sharma@mamtahospital.com', '9876543211', 'User', 'Cardiology', 'Senior Consultant', true),
-    ('3', 'nurse_priya', '121212', 'Priya Patel', 'priya@mamtahospital.com', '9876543212', 'User', 'ICU', 'Head Nurse', false),
-    ('4', 'sahil_it', '121212', 'Sahil Mirza', 'sahil@mamtahospital.com', '9876543213', 'User', 'IT & Infrastructure', 'IT Executive', true)
-ON CONFLICT (id) DO NOTHING;
+    ('1', 'admin', 'admin123', 'System Administrator', 'admin@mamtahospital.com', '9876543210', 'Admin', 'Management', 'Hospital Admin', true),
+    ('2', 'user', 'user123', 'Hospital Staff User', 'user@mamtahospital.com', '9876543211', 'User', 'General Operations', 'Hospital Staff', true)
+ON CONFLICT (id) DO UPDATE SET
+    password = EXCLUDED.password,
+    role = EXCLUDED.role,
+    status = EXCLUDED.status;
 
 
 -- ====================================================================

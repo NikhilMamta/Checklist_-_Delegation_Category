@@ -24,7 +24,8 @@ const AdminRoute = ({ children }) => {
   if (!currentUser) {
     return <Navigate to="/login" replace />;
   }
-  if (currentUser.role !== 'Admin') {
+  const roleStr = currentUser?.role ? String(currentUser.role).toLowerCase() : '';
+  if (roleStr !== 'admin') {
     return <Navigate to="/" replace />;
   }
   return children;
